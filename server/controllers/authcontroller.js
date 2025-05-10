@@ -13,7 +13,7 @@ export const register = async (req,res)=>{
 
 
     if (!name || !email || !password){
-        return res.json({success:false  , message:'Missing Detials'})
+        return res.json({success:false  , message:'Missing Details'})
     }
     try {
         //existing user check
@@ -24,6 +24,7 @@ export const register = async (req,res)=>{
 
         //encrypting password to DB
         const hasshedPassword = await bcrypt.hash(password , 10)
+        
 
         const user = new userModel ({name , email , password:hasshedPassword});  //new user auth
         await user.save(); // save this user in database
