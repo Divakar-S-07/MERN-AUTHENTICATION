@@ -229,8 +229,42 @@ export const register = async (req,res)=>{
 
         res.json({ success: true, message: "OTP sent to your email" });
        } catch (error) {
-        
+        res.json({success: false , message: error.message})
        }
     }
 
-    
+    //Reset user Password
+  export const resetPassword = async (req,res)=>{
+        const {email,otp,newPassword}= req.body;
+
+        if(!email || !otp || !newPassword){
+            return res.json({success:false , message:'Missing details'})
+        }
+
+        try {
+            
+            const user = await userModel.findOne({email});
+            if(!user){
+                return res.json({success:false , message:'User not found'})
+            }
+
+            if(user.resetOtp === "" || user.resetOtp != otp){
+                return res.json({success:false , message:'Invalid OTP'})
+            }
+
+            if(user.resetOtpExpiredAt < Date.now()){
+                return res.json({success:false , message:'OTP expired'})
+            }
+
+            const hashedPassword = await bcrypt.hash(newPassword , 10);
+            user.password = hashedPassword;
+            user.resetOtp = '';
+            user.resetOtpExpiredAt = 0;
+            await user.save();
+            return res.json({success:true , message:'Password reset successfully'})
+
+        } catch (error) {
+            return res.json({success: false , message: error.message})
+            
+        }
+    }
