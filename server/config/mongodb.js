@@ -5,7 +5,7 @@ const connectDB = async ()=>{
         console.log("Database connected");
     });
    
-    await mongoose.connect(`${process.env.MONGODB_URL}/MERN-AUTHENTICATON`);
+    await mongoose.connect(`${process.env.MONGODB_URL}/MERN_AUTHENTICATION`);
 }
 
 
